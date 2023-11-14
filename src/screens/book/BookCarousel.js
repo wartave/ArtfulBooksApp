@@ -41,7 +41,6 @@ const img = 'https://static.wikia.nocookie.net/esharrypotter/images/9/9a/Harry_P
 const BookList = ({categoria, libros}) => {
 
   const navigation = useNavigation();
-  console.log("BookLsit:",libros);
   const [activeIndex, setActiveIndex] = useState(0);
   const [libro,setLibroActual] =useState(0);
 
@@ -60,63 +59,72 @@ const BookList = ({categoria, libros}) => {
   //setLibroActual(libros[activeIndex]);
   const renderItem = ({ item, index  }) => {
 
-    console.log('item:', item);
+    //console.log('item:', item);
     return (
-      <View>
+      <View key={index}>
         <TouchableOpacity onPress={() => handleItemPress(index,item)}>
-          <Image source={{ uri: item?.imagene.url }} style={{ width: 80, height: 130 }} />
+          <Image source={{ uri: item?.imagene?.url }} style={{ width: 80, height: 130 }} />
         </TouchableOpacity>
       </View>
     );
   }
    const goToDetails = () =>{
-    navigation.navigate('DetalleLibros',{libro});
+   // navigation.navigate('DetalleLibros',{libro}); opcion funcional pero sin historial
+    
+    navigation.push('DetalleLibros', { libro});
    }
 
   return (
+    
     <LinearGradient
       colors={['transparent', '#000000']}>
-      <Box my='10' alignContent='flex-start' height='80' >
-        <View marginBottom='3'>
-          <Text fontSize='xl' fontWeight='bold'>{categoria}</Text>
-        </View>
-        <Carousel
-
-          ref={carouselRef}
-          data={libros}
-          renderItem={renderItem}
-          onSnapToItem={(index) =>{
+        {libros==null?(
+          <Text fontSize='2xl' color='amber.400'>Bienvenido a Artful Books</Text>
+          ):(
+            <Box my='10' alignContent='flex-start' height='80' >
+            <View marginBottom='3'>
+              <Text fontSize='xl' fontWeight='bold'>{categoria}</Text>
+            </View>
             
-            setLibroActual(libros[index]);
-            setActiveIndex(index); } }
-          sliderWidth={600}
-
-          sliderHeight={100} // establecer la altura deseada
-          itemWidth={100}
-          layout={'default'}
-          loop={false}
-          loopClonesPerSide={3}
-          inactiveSlideOpacity={0.5}
-          inactiveSlideScale={0.9}
-
-          activeSlideAlignment={'start'}
-          activeSlideOffset={10}
-          removeClippedSubviews={false}
-          firstItem={activeIndex}
-
-        />
-        <View style={{}} height='32' padding='2' paddingLeft='4' paddingRight='4'>
-          <Divider />
-          <Text fontSize='lg' fontWeight='bold' marginBottom='4'>{libros[activeIndex]?.nombre}</Text>
-          <Text textAlign='justify' height='16' numberOfLines={2}>{libros[activeIndex]?.sinopsis}</Text>
-          <View style={{ alignSelf: 'flex-end' }} marginTop='1'>
-            <TouchableOpacity style={{ alignSelf: 'flex-end', flexDirection: 'row' }} onPress={goToDetails}>
-              <Text color='white'>Mas detalles</Text>
-              <Ionicons name="arrow-forward" size={20} color="white" />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Box>
+            <Carousel
+    
+              ref={carouselRef}
+              data={libros}
+              renderItem={renderItem}
+              onSnapToItem={(index) =>{
+                
+                setLibroActual(libros[index]);
+                setActiveIndex(index); } }
+              sliderWidth={600}
+    
+              sliderHeight={100} // establecer la altura deseada
+              itemWidth={100}
+              layout={'default'}
+              loop={false}
+              loopClonesPerSide={3}
+              inactiveSlideOpacity={0.5}
+              inactiveSlideScale={0.9}
+    
+              activeSlideAlignment={'start'}
+              activeSlideOffset={10}
+              removeClippedSubviews={false}
+              firstItem={activeIndex}
+    
+            />
+            <View style={{}} height='32' padding='2' paddingLeft='4' paddingRight='4'>
+              <Divider />
+              <Text fontSize='lg' fontWeight='bold' marginBottom='4'>{libros[activeIndex]?.nombre}</Text>
+              <Text textAlign='justify' height='16' numberOfLines={2}>{libros[activeIndex]?.sinopsis}</Text>
+              <View style={{ alignSelf: 'flex-end' }} marginTop='1'>
+                <TouchableOpacity style={{ alignSelf: 'flex-end', flexDirection: 'row' }} onPress={goToDetails}>
+                  <Text color='white'>Mas detalles</Text>
+                  <Ionicons name="arrow-forward" size={20} color="white" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Box>
+          )}
+      
     </LinearGradient>
 
   );

@@ -14,6 +14,9 @@ import RegisterScreen from "./auth/RegisterScreen";
 import Suscripciones from "../components/Suscripciones";
 import NavigationTabScreen from "./main/NavigationTabScreen";
 import BookDetailsScreen from "./book/BookDetailsScreen";
+import EpubScreen from "./epub/EpubScreen";
+import SubscriptionScreen from "../components/SuscripcionFormulario";
+import PlanScreen from "./plans/PlanScreen";
 
 
 
@@ -26,17 +29,17 @@ export default function MainNavigation() {
         <>
             <Stack.Navigator
                 screenOptions={{ headerShown: false }}
-                initialRouteName="MainScreen">
+                initialRouteName="Splash">
                 {user.token ? (<>
                     <Stack.Screen name="MainScreen" component={NavigationTabScreen} />
                     
                     <Stack.Screen name="DetalleLibros" component={BookDetailsScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Lectura" component={EpubScreen} options={{ headerShown: false }}  initialParams={{ libro: null }} />
+                    <Stack.Screen name="Plan" component={PlanScreen} options={{ headerShown: false }} />
                 </>
                     
                 ) : (
                     <>
-                    
-                    <Stack.Screen name="MainScreen" component={NavigationTabScreen} />
                         <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
                         <Stack.Screen name="Login" component={LoginScreen} initialParams={{ username: '' }} />
                         <Stack.Screen name="Register" component={RegisterScreen} />

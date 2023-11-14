@@ -15,7 +15,7 @@ export default Colors={
     darkRed: '#d9365e',
     purple: '#8f06e4',
     skyBlue: 'skyblue',
-    yellow: '#f8c907',
+    yellow: '#F0A500',
     pink: '#ff4c98',
     gold: 'gold',
     line: '#282C35',

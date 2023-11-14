@@ -1,49 +1,50 @@
-import React, { useState } from 'react';
-import {  StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { RefreshControl, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Box, View, ScrollView } from 'native-base';
+import { Box, View, ScrollView, HStack, Text, Divider } from 'native-base';
 import CategoriaLibros from '../../components/CategoriaLibros';
 import SearchBarBook from '../../components/SearchBarBook';
 import BookList from '../book/BookCarousel';
 import useGetRequest from '../../hooks/useGetRequest';
 import FullSpinner from '../../components/FullSpinner';
+import CenterSpinner from '../../components/CenterSpinner';
+import { useAppState } from '../../context/AppContext';
 
 
-const librosPorCategoria = [
-    {
-        categoria: 'Novedades',
-        libros: [
-            { titulo: 'Titulo Novedades' },
-            { titulo: 'Titulo Novedades' },
-            { titulo: 'Titulo Novedades' },
-        ],
-    },
-    {
-        categoria: 'Libros que estás leyendo',
-        libros: [
-            { titulo: 'Titulo leyendo' },
-            { titulo: 'Titulo leyendo' },
-            { titulo: 'Titulo leyendo' },
-        ],
-    },
-    {
-        categoria: 'Categoría de libros',
-        libros: [
-            { titulo: 'Titulo Categoría' },
-            { titulo: 'Titulo Categoría' },
-            { titulo: 'Titulo Categoría' },
-        ],
-    },
-];
+
 
 const HomeScreen = ({ navigation }) => {
+    const { user } = useAppState();
+    const { data, loading, reload } = useGetRequest('/categoria-libros');
 
-    const {data,loading} =useGetRequest('/categoria-libros');
-    const [section, setSection] = useState('inicio');
+    const {userId, setUserId} =useState(null);
 
-    const handleSectionChange = (newSection) => {
-        setSection(newSection);
+    const { data: recomendacionData, loading: loadingRecomendacion, reload:reloadRecomendacion } = useGetRequest(`/recomendaciones15minutos/${user?.usuario?.id_usuario}`);
+
+    const { refreshing, setRefreshing } = React.useState(false);
+
+
+
+    console.log('useruseruseruser:', user);
+    const refreshPage = () => {
+        try {
+
+            setRefreshing(true);
+            setTimeout(() => {
+
+
+                setRefreshing(false);
+            }, 4000);
+        } catch (e) {
+            console.log('error:', e);
+        }
     };
+    const onRefreshT = React.useCallback(() => {
+        console.log('useCallback:');
+        reload();
+        reloadRecomendacion();
+    }, []);
+
 
     return (
         <View style={styles.container}>
@@ -51,20 +52,33 @@ const HomeScreen = ({ navigation }) => {
                 colors={['#1D2331', '#000000']}
                 style={styles.linearGradient}
             >
-                
-                
                 <View style={styles.content}>
+                    <HStack mb='2'>
+                        <Text fontSize='2xl'>Inicio</Text>
+                    </HStack>
+
+                    <Divider mb='3' />
                     <View>
-                        <View marginTop='12' marginBottom='2' style={{ marginLeft: 16, marginRight: 16 }}>
-                            <SearchBarBook />
-                        </View>
-                        <ScrollView marginBottom='32' marshowsVerticalScrollIndicator={false}>
-                            {loading?(<FullSpinner/>):(data?.map(index =>{
-                                console.log("FullSpinner:",index);
-                                return (
-                                    <BookList categoria={index.categoria} libros={index.libros}/>
-                                );
-                            }))}
+                        <ScrollView refreshControl={
+                            <RefreshControl refreshing={loading} onRefresh={onRefreshT} />
+                        } marginBottom='32' marshowsVerticalScrollIndicator={false}>
+                            {loadingRecomendacion  ?
+                                <CenterSpinner /> : <BookList key={0} categoria={"Recomendados para ti"} libros={recomendacionData} />
+                                
+                            }
+                            {loading ? (
+                                <FullSpinner />
+                            ) : (
+                                data?.map((value, index) => {
+                                    console.log("FullSpinner:", index);
+                                    if (!value.libros || value.libros.length === 0) {
+                                        return null;
+                                    }
+                                    return (
+                                        <BookList key={index} categoria={value.categoria} libros={value.libros} />
+                                    );
+                                })
+                            )}
                         </ScrollView>
 
                     </View>

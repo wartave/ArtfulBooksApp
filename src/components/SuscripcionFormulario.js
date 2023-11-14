@@ -37,13 +37,13 @@ const SubscriptionScreen = ({ navigation }) => {
   const handleSubmit = async () => {
     
     setProcessing(true);
-
-    const response = await fetch('http://192.168.0.110:3001/crear-suscripcion', {
+    console.log("handleSubmit");
+    const response = await fetch('http://192.168.0.105:3001/crear-suscripcion', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ usuarioId:1, planId:'price_1Mj3T9HlcUhpnikzURHAOHzm', token })
+      body: JSON.stringify({ usuarioId:2, planId:'prod_NkG3m7nIzfNrtA', token })
     });
 
     if (response.ok) {

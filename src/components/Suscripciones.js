@@ -1,9 +1,11 @@
 import React from 'react';
-import { StyleSheet,SafeAreaView } from 'react-native';
+import { StyleSheet,SafeAreaView, TouchableOpacity } from 'react-native';
 import { Container, Box, Text, Button, View } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 
 import { LinearGradient } from 'expo-linear-gradient';
+
+import { Ionicons } from '@expo/vector-icons';
 import CardSuscripcion from './CardSuscripcion';
 
 
@@ -53,6 +55,9 @@ const Suscripciones = () => {
             Iniciar sesión
           </Button>
         </View>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButtom}>
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
       </LinearGradient>
 
     </SafeAreaView>

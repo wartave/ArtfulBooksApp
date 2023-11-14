@@ -8,7 +8,8 @@ const AppContext = createContext();
 function AppCtxProvider({children}) {
   const [user, setUser] = useState(null);
 
-  const saveData = async data => {
+  /*const saveData = async data => {
+    console.error('data stripe status:',data);
     setUser({...user, ...data});
     try {
       const user_info = await AsyncStorage.getItem('user_info');
@@ -17,10 +18,33 @@ function AppCtxProvider({children}) {
         ...data,
       };
       await AsyncStorage.setItem('user_info', JSON.stringify(newData));
+      console.error('data stripe user:',user);
     } catch (error) {
       console.log(error);
     }
   };
+*/
+
+const saveData = async (data) => {
+  console.error('data stripe status:', data.usuario.stripeStatus);
+  const { usuario } = user;
+  const newUsuario = { ...usuario, stripeStatus: data.usuario.stripeStatus };
+  const newUser = { ...user, usuario: newUsuario };
+  setUser(newUser);
+  try {
+    const user_info = await AsyncStorage.getItem('user_info');
+    const newData = {
+      ...JSON.parse(user_info),
+      ...data,
+      usuario: newUsuario,
+    };
+    await AsyncStorage.setItem('user_info', JSON.stringify(newData));
+    console.error('data stripe user:', newUser);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 
   useEffect(() => {
     const getData = async () => {

@@ -15,6 +15,7 @@ import RegisterScreen from "./src/screens/auth/RegisterScreen";
 import MainNavigation from "./src/screens";
 import NavigationTabScreen from "./src/screens/main/NavigationTabScreen";
 import EpubScreen from "./src/screens/epub/EpubScreen";
+import { StripeProvider } from "@stripe/stripe-react-native";
 
 // Define the config
 const config = {
@@ -44,13 +45,14 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NativeBaseProvider theme={customTheme}>
-      
-      <NavigationContainer>
-        <AppCtxProvider>
-          
-        <EpubScreen />
-        </AppCtxProvider>
-      </NavigationContainer>
+      <StripeProvider publishableKey="pk_test_51Mi4X9HlcUhpnikzIBqwVGix8UvcgMC9PGXlJT2ogW4TxMttn5WXY0rN21Pvh2BFF9sJlbUquxuqGkQLXTAv5qB7007WHN1KD7">
+        <NavigationContainer>
+          <AppCtxProvider>
+            <MainNavigation />
+          </AppCtxProvider>
+        </NavigationContainer>
+      </StripeProvider>
+
 
 
     </NativeBaseProvider>

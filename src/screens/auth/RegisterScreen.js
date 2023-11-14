@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { StripeProvider, CardField, useStripe, useConfirmPayment } from '@stripe/stripe-react-native';
-import { Container, Stack, FormControl, Input, Button, Text, Image, Divider, Icon } from 'native-base';
+import { Container, Stack, FormControl, Input, Button, Text, Image, Divider, Icon, KeyboardAvoidingView } from 'native-base';
 
 import GradientBaground from '../../components/GradientBaground';
 
@@ -58,6 +58,11 @@ const RegisterScreen = ({ navigation }) => {
 
   const handleSubmit = async () => {
     try {
+      if (!form.nombre || !form.apellido || !form.email || !form.fecha_nacimiento || !form.password) {
+        alert('Por favor complete todos los campos');
+        return;
+      }
+
       setProcessing(true);
       const res = await HttpClient.post('/crear-usuario', form);
       if (res.data) {
@@ -132,90 +137,93 @@ const RegisterScreen = ({ navigation }) => {
 
         <Text fontWeight='bold' fontSize='xl' marginTop='12' my='4'>Crear cuenta</Text>
 
-        <FormControl >
-          <Stack space='2'>
-            <Stack>
-              <Input borderRadius='0'
-                variant="filled" p='3'
-                placeholderTextColor='#7F7F7F'
-                size='lg' placeholder="Nombre"
-                autoCapitalize="none"
-                borderColor='#909497'
-                backgroundColor="#1D2331" _focus={{
-                  borderColor: '#F0A500'
-                }}
+        <KeyboardAvoidingView behavior="position" width='100%'>
+          <FormControl isRequired>
+            <Stack space='2'>
+              <Stack>
+                <Input borderRadius='0'
+                  variant="filled" p='3'
+                  placeholderTextColor='#7F7F7F'
+                  size='lg' placeholder="Nombre"
+                  autoCapitalize="none"
+                  borderColor='#909497'
+                  backgroundColor="#1D2331" _focus={{
+                    borderColor: '#F0A500'
+                  }}
 
-                onChangeText={e => handleChange(e, 'firstName')} value={form.firstName} />
+                  onChangeText={e => handleChange(e, 'nombre')} value={form.nombre} />
+              </Stack>
+              <Stack>
+                <Input borderRadius='0'
+                  variant="filled" p='3'
+                  placeholderTextColor='#7F7F7F'
+                  size='lg' placeholder="Apellido" autoCapitalize="none"
+                  borderColor='#909497'
+                  backgroundColor="#1D2331"
+                  _focus={{
+                    borderColor: '#F0A500'
+                  }} onChangeText={e => handleChange(e, 'apellido')} value={form.apellido} />
+              </Stack>
+              <Stack>
+                <Input borderRadius='0'
+                  variant="filled" p='3'
+                  placeholderTextColor='#7F7F7F'
+                  size='lg' placeholder="Correo electrónico"
+                  autoCapitalize="none"
+                  borderColor='#909497'
+                  backgroundColor="#1D2331"
+                  _focus={{
+                    borderColor: '#F0A500'
+                  }} onChangeText={e => handleChange(e, 'email')} value={form.email} />
+              </Stack>
+              <Stack >
+
+                <TouchableOpacity style={{
+                  width: '100%',
+                  height: 50,
+                  borderColor: '#909497',
+                  borderWidth: 1,
+                  backgroundColor: "#1D2331",
+                  justifyContent: 'center'
+                }} onPress={showDatePicker}>
+                  <Text ml='3' color='#7F7F7F' fontSize='md'>{dateText}</Text>
+                </TouchableOpacity>
+                <DateTimePickerModal
+                  isVisible={isDatePickerVisible}
+                  mode="date"
+                  onConfirm={handleConfirm}
+                  onCancel={hideDatePicker}
+
+                />
+              </Stack>
+
+
+              <Stack>
+                <Input borderRadius='0'
+                  variant="filled" p='3'
+                  placeholderTextColor='#7F7F7F'
+                  size='lg' placeholder="Contraseña" autoCapitalize="none"
+                  borderColor='#909497'
+                  backgroundColor="#1D2331"
+                  _focus={{
+                    borderColor: '#F0A500'
+                  }}
+                  onChangeText={e => handleChange(e, 'password')} value={form.password} />
+              </Stack>
+
             </Stack>
-            <Stack>
-              <Input borderRadius='0'
-                variant="filled" p='3'
-                placeholderTextColor='#7F7F7F'
-                size='lg' placeholder="Apellido" autoCapitalize="none"
-                borderColor='#909497'
-                backgroundColor="#1D2331"
-                _focus={{
-                  borderColor: '#F0A500'
-                }} onChangeText={e => handleChange(e, 'lastName')} value={form.lastName} />
-            </Stack>
-            <Stack>
-              <Input borderRadius='0'
-                variant="filled" p='3'
-                placeholderTextColor='#7F7F7F'
-                size='lg' placeholder="Correo electrónico"
-                autoCapitalize="none"
-                borderColor='#909497'
-                backgroundColor="#1D2331"
-                _focus={{
-                  borderColor: '#F0A500'
-                }} onChangeText={e => handleChange(e, 'email')} value={form.email} />
-            </Stack>
-            <Stack >
-
-              <TouchableOpacity style={{
-                width: '100%',
-                height: 50,
-                borderColor: '#909497',
-                borderWidth: 1,
-                backgroundColor: "#1D2331",
-                justifyContent: 'center'
-              }} onPress={showDatePicker}>
-                <Text ml='3' color='#7F7F7F' fontSize='md'>{dateText}</Text>
-              </TouchableOpacity>
-              <DateTimePickerModal
-                isVisible={isDatePickerVisible}
-                mode="date"
-                onConfirm={handleConfirm}
-                onCancel={hideDatePicker}
-                
-              />
-            </Stack>
 
 
-            <Stack>
-              <Input borderRadius='0'
-                variant="filled" p='3'
-                placeholderTextColor='#7F7F7F'
-                size='lg' placeholder="Contraseña" autoCapitalize="none"
-                borderColor='#909497'
-                backgroundColor="#1D2331"
-                _focus={{
-                  borderColor: '#F0A500'
-                }}
-                onChangeText={e => handleChange(e, 'password')} value={form.password} />
-            </Stack>
+            <Button isLoading={processing} block borderRadius='0' marginTop='10' p='3.5' bg='#F0A500' color='#A5A5A5'
+              onPress={handleSubmit}
+              _pressed={{
+                bg: '#C88200'
+              }}>
+              <Text>Crear cuenta</Text>
+            </Button>
+          </FormControl>
 
-          </Stack>
-
-
-          <Button isLoading={processing} block borderRadius='0' marginTop='10' p='3.5' bg='#F0A500' color='#A5A5A5'
-            onPress={handleSubmit}
-            _pressed={{
-              bg: '#C88200'
-            }}>
-            <Text>Crear cuenta</Text>
-          </Button>
-        </FormControl>
+        </KeyboardAvoidingView>
 
         <Divider my="4" />
         <View maxWidth="100%" width="100%" alignItems='center' >
@@ -227,7 +235,7 @@ const RegisterScreen = ({ navigation }) => {
             bg: '#000000',
             borderColor: '#ffffff',
             borderWidth: 1,
-          }}>
+          }} onPress={() => navigation.goBack()}>
           <Text>Iniciar sesion</Text>
         </Button>
       </Container>
